@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local HR 發展路徑 | Moxa MAT</title>
+<style>
+  :root {
+    --teal-dark:  #0A6E72;
+    --teal-mid:   #118A8E;
+    --teal-light: #E6F5F5;
+    --teal-faint: #F0FAFA;
+    --orange:     #E8820C;
+    --orange-lt:  #FEF3E2;
+    --orange-bd:  #F5C786;
+    --purple:     #5B4DA0;
+    --purple-lt:  #EEE9FF;
+    --green:      #1A6B3C;
+    --green-lt:   #E6F5EC;
+    --blue:       #1A5E8A;
+    --blue-lt:    #E6F0FA;
+    --brown:      #7B3F00;
+    --brown-lt:   #FDF0E6;
+    --gray:       #374151;
+    --gray-mid:   #6B7280;
+    --gray-lt:    #F3F4F6;
+    --white:      #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Microsoft JhengHei', 'Noto Sans TC', Arial, sans-serif;
+    background: #F7FAFA;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--teal-dark);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .site-header .brand {
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .site-header .brand span {
+    color: #B2DFDF;
+    font-weight: 400;
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal-mid) 100%);
+    color: var(--white);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .hero p {
+    color: #B2DFDF;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── PHASE PROGRESS BAR ── */
+  .phase-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    max-width: 780px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .phase-bar-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.6rem 0.5rem;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    gap: 0.2rem;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .phase-bar-item:last-child { border-right: none; }
+  .phase-bar-item:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+  .phase-bar-item.active {
+    background: rgba(255,255,255,0.18);
+    color: var(--white);
+    font-weight: 700;
+  }
+  .phase-bar-item .icon { font-size: 1.2rem; }
+  .phase-bar-item .label { line-height: 1.2; }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── SECTION ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .section-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+    margin-bottom: 0.4rem;
+  }
+  .section-header p {
+    color: var(--gray-mid);
+    font-size: 0.95rem;
+  }
+  .section-header .time-badge {
+    display: inline-block;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    border-radius: 20px;
+    padding: 0.2rem 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.11);
+  }
+  .card-header {
+    padding: 1rem 1.2rem 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .card-body {
+    padding: 0 1.2rem 0.8rem;
+    flex: 1;
+  }
+  .card-body ul {
+    list-style: none;
+    padding: 0;
+  }
+  .card-body ul li {
+    font-size: 0.875rem;
+    color: var(--gray);
+    padding: 0.3rem 0;
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.5;
+  }
+  .card-body ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--gray-mid);
+    font-weight: 700;
+  }
+  .card-keypoint {
+    margin: 0.5rem 1.2rem 1.2rem;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+  }
+  .card-keypoint .kp-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+  .card-keypoint .kp-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  /* ── MILESTONE BAR ── */
+  .milestone {
+    background: var(--orange-lt);
+    border: 1px solid var(--orange-bd);
+    border-radius: 10px;
+    padding: 1rem 1.4rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  .milestone-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .milestone-content strong {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--orange);
+    margin-bottom: 0.2rem;
+  }
+  .milestone-content p {
+    font-size: 0.875rem;
+    color: var(--gray);
+  }
+
+  /* ── SANDY ROLE ── */
+  .sandy-role {
+    background: var(--teal-light);
+    border: 1px solid #A8D8D8;
+    border-radius: 10px;
+    padding: 0.8rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.875rem;
+  }
+  .sandy-role strong { color: var(--teal-dark); margin-right: 0.3rem; }
+
+  /* ── PHASE 1 LIST STYLE ── */
+  .phase1-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .phase1-item {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: transform 0.18s;
+  }
+  .phase1-item:hover { transform: translateX(4px); }
+  .phase1-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--teal-dark);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .phase1-text strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+    margin-bottom: 0.2rem;
+  }
+  .phase1-text p { font-size: 0.875rem; color: var(--gray-mid); }
+
+  /* ── PHASE 2 SESSION LIST ── */
+  .session-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .session-item {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    padding: 0.9rem 1.2rem;
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.18s;
+  }
+  .session-item:hover { transform: translateX(4px); }
+  .session-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .session-info strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--gray);
+    margin-bottom: 0.15rem;
+  }
+  .session-info span { font-size: 0.8rem; color: var(--gray-mid); }
+  .session-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* ── GPS TARGETS ── */
+  .gps-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+  }
+  .gps-tab {
+    padding: 0.5rem 1.8rem;
+    border-radius: 8px;
+    border: 2px solid var(--teal-mid);
+    background: var(--white);
+    color: var(--teal-mid);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: inherit;
+  }
+  .gps-tab.active, .gps-tab:hover {
+    background: var(--teal-mid);
+    color: var(--white);
+  }
+
+  .gps-notice {
+    background: var(--orange-lt);
+    border: 1px solid var(--orange-bd);
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-bottom: 1.2rem;
+  }
+  .gps-notice strong { color: var(--orange); }
+
+  .gps-section { display: none; }
+  .gps-section.active { display: block; }
+
+  .gps-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .gps-col-header {
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    text-align: center;
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .gps-col-header .arrow {
+    font-size: 1rem;
+    opacity: 0.7;
+  }
+
+  .gps-row {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    font-size: 0.875rem;
+    transition: transform 0.15s;
+  }
+  .gps-row:hover { transform: translateX(3px); }
+  .gps-row:nth-child(even) { background: #FAFCFC; }
+  .dim-tag {
+    flex-shrink: 0;
+    border-radius: 5px;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--white);
+    white-space: nowrap;
+    margin-top: 0.1rem;
+  }
+  .gps-row p { color: var(--gray); line-height: 1.5; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid #D1E8E8;
+    margin: 1.5rem 0;
+  }
+
+  /* ── COLORS per dim ── */
+  .c-recruit { background: #5B4DA0; }
+  .c-compliance { background: #118A8E; }
+  .c-er { background: #E8820C; }
+  .c-ld { background: #1A6B3C; }
+  .c-cb { background: #1A5E8A; }
+  .c-pm { background: #7B3F00; }
+  .c-role { background: #1A6B3C; }
+
+  .border-recruit { border-left: 3px solid #5B4DA0; }
+  .border-compliance { border-left: 3px solid #118A8E; }
+  .border-er { border-left: 3px solid #E8820C; }
+  .border-ld { border-left: 3px solid #1A6B3C; }
+  .border-cb { border-left: 3px solid #1A5E8A; }
+  .border-pm { border-left: 3px solid #7B3F00; }
+  .border-role { border-left: 3px solid #1A6B3C; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.4rem; }
+    .gps-split { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: 1fr; }
+    .session-item { grid-template-columns: 40px 1fr; }
+    .session-badge { display: none; }
+    .phase-bar-item .label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="brand">
+    Local HR 發展路徑
+    <span>Moxa MAT Region · Human Resources</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>你的 12 個月成長地圖</h1>
+  <p>從啟動準備出發，循序深化核心 HR 能力，邁向獨立判斷</p>
+
+  <div class="phase-bar">
+    <div class="phase-bar-item active" onclick="showPhase('p1')">
+      <span class="icon">📋</span>
+      <span class="label">Phase 1<br>啟動準備</span>
+    </div>
+    <div class="phase-bar-item" onclick="showPhase('p2')">
+      <span class="icon">🎓</span>
+      <span class="label">Phase 2<br>深化核心功能</span>
+    </div>
+    <div class="phase-bar-item" onclick="showPhase('p3')">
+      <span class="icon">🚀</span>
+      <span class="label">Phase 3<br>整合與獨立運作</span>
+    </div>
+    <div class="phase-bar-item" onclick="showPhase('gps')">
+      <span class="icon">🎯</span>
+      <span class="label">我的<br>GPS 目標</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ── PHASE 1 ── -->
+  <section id="p1" class="section active">
+    <div class="section-header">
+      <div class="time-badge">Month 1</div>
+      <h2>Phase 1｜啟動準備</h2>
+      <p>在進入共學之前，先建立學習的心態和知識底座</p>
+    </div>
+
+    <div class="phase1-items">
+      <div class="phase1-item">
+        <div class="phase1-num">1</div>
+        <div class="phase1-text">
+          <strong>閱讀《用人資味》第一章</strong>
+          <p>「強化心智的自我對話」——了解自己的學習方式，建立主動學習者的心態，再進入後續共學</p>
+        </div>
+      </div>
+      <div class="phase1-item">
+        <div class="phase1-num">2</div>
+        <div class="phase1-text">
+          <strong>閱讀 Learning Guide，建立六大功能概念地圖與 HR Planning 視野框架</strong>
+          <p>系統性閱讀 HR 六大功能學習指南，理解每個功能的理論框架、Moxa 情境範例與操作指引</p>
+        </div>
+      </div>
+      <div class="phase1-item">
+        <div class="phase1-num">3</div>
+        <div class="phase1-text">
+          <strong>現有實務接上理論脈絡</strong>
+          <p>回想你目前在做的 HR 工作，試著對應到六大功能的框架——你已經在做的事情，理論上叫什麼？</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-icon">✅</div>
+      <div class="milestone-content">
+        <strong>Phase 1 里程碑</strong>
+        <p>能用自己的話說明六大功能各自在做什麼，並舉出一個你目前工作中對應的例子</p>
+      </div>
+    </div>
+
+    <div class="sandy-role">
+      <strong>Sandy 的角色：</strong>提供 Learning Guide，確認閱讀完成，並在你有問題時提供方向
+    </div>
+  </section>
+
+  <!-- ── PHASE 2 ── -->
+  <section id="p2" class="section">
+    <div class="section-header">
+      <div class="time-badge">Month 2–9 · 8 次線上共學</div>
+      <h2>Phase 2｜深化核心功能</h2>
+      <p>每月一次 75 分鐘線上共學，三人一起討論、從實際案例建立判斷力</p>
+    </div>
+
+    <div class="session-list">
+      <div class="session-item">
+        <div class="session-num" style="background:#5B4DA0">1</div>
+        <div class="session-info">
+          <strong>招募選才（Talent Acquisition）</strong>
+          <span>EVP、P-J/P-O Fit、STAR 面試法、招募漏斗</span>
+        </div>
+        <div class="session-badge" style="background:#EEE9FF;color:#5B4DA0">×1</div>
+      </div>
+      <div class="session-item">
+        <div class="session-num" style="background:#118A8E">2</div>
+        <div class="session-info">
+          <strong>HR 法規合規（上）</strong>
+          <span>雇傭關係基礎、派遣員工管理、工時與休假法規</span>
+        </div>
+        <div class="session-badge" style="background:#E6F5F5;color:#118A8E">×2 之 1</div>
+      </div>
+      <div class="session-item">
+        <div class="session-num" style="background:#118A8E">3</div>
+        <div class="session-info">
+          <strong>HR 法規合規（下）</strong>
+          <span>終止雇傭程序、個資保護、反歧視原則</span>
+        </div>
+        <div class="session-badge" style="background:#E6F5F5;color:#118A8E">×2 之 2</div>
+      </div>
+      <div class="session-item">
+        <div class="session-num" style="background:#E8820C">4</div>
+        <div class="session-info">
+          <strong>員工關係（Employee Relations）</strong>
+          <span>心理契約、員工敬業度、漸進式紀律程序、離職面談</span>
+        </div>
+        <div class="session-badge" style="background:#FEF3E2;color:#E8820C">×1</div>
+      </div>
+      <div class="session-item">
+        <div class="session-num" style="background:#1A6B3C">5</div>
+        <div class="session-info">
+          <strong>訓練與發展（L&D）</strong>
+          <span>70-20-10 模型、Kolb 學習圈、Kirkpatrick 評估、IDP</span>
+        </div>
+        <div class="session-badge" style="background:#E6F5EC;color:#1A6B3C">×1</div>
+      </div>
+      <div class="session-item">
+        <div class="session-num" style="background:#1A5E8A">6</div>
+        <div class="session-info">
+          <strong>薪酬與福利（C&B）</strong>
+          <span>三種公平性、薪資帶、Compa Ratio、Total Rewards、市場定位</span>
+        </div>
+        <div class="session-badge" style="background:#E6F0FA;color:#1A5E8A">×1</div>
+      </div>
+      <div class="session-item">
+        <div class="session-num" style="background:#7B3F00">7</div>
+        <div class="session-info">
+          <strong>績效管理（上）</strong>
+          <span>績效管理循環、SMART 目標、OKR vs. KPI</span>
+        </div>
+        <div class="session-badge" style="background:#FDF0E6;color:#7B3F00">×2 之 1</div>
+      </div>
+      <div class="session-item">
+        <div class="session-num" style="background:#7B3F00">8</div>
+        <div class="session-info">
+          <strong>績效管理（下）</strong>
+          <span>績效校準、SBI 回饋模型、跨功能整合回顧</span>
+        </div>
+        <div class="session-badge" style="background:#FDF0E6;color:#7B3F00">×2 之 2</div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-icon">✅</div>
+      <div class="milestone-content">
+        <strong>Phase 2 里程碑（每功能結束後確認）</strong>
+        <p>遇到這個功能相關的日常情境，能獨立處理初步判斷，知道何時需要向 Sandy 確認</p>
+      </div>
+    </div>
+
+    <div class="sandy-role">
+      <strong>Sandy 的角色：</strong>共學夥伴——一起討論、一起學習，而不是老師對學生。每次共學 Sandy 也帶著自己的問題和觀察進來
+    </div>
+  </section>
+
+  <!-- ── PHASE 3 ── -->
+  <section id="p3" class="section">
+    <div class="section-header">
+      <div class="time-badge">Month 10–12</div>
+      <h2>Phase 3｜整合與獨立運作</h2>
+      <p>把六大功能的判斷力整合起來，面對跨功能的複雜情境</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#E6F5F5;color:#0A6E72">🔗</div>
+          <div class="card-title" style="color:#0A6E72">跨功能整合演練</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li>遇到複雜情境時，能識別涉及哪些 HR 功能</li>
+            <li>能自己分析問題、提出初步判斷，再與 Sandy 討論</li>
+            <li>不再依賴「這種情況我要去問 Sandy」的反射動作</li>
+          </ul>
+        </div>
+        <div class="card-keypoint" style="background:#E6F5F5;">
+          <div class="kp-label" style="color:#0A6E72">KEY POINT</div>
+          <div class="kp-text" style="color:#0A6E72">獨立分析一個跨功能真實案例</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#EEE9FF;color:#5B4DA0">📚</div>
+          <div class="card-title" style="color:#5B4DA0">第二階段讀書會啟動準備</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li>回顧八次共學的里程碑，確認自己的能力成長</li>
+            <li>準備進入第二階段：讀書會形式的深度思維發展</li>
+            <li>和 Sandy 討論第二階段的閱讀方向和期待</li>
+          </ul>
+        </div>
+        <div class="card-keypoint" style="background:#EEE9FF;">
+          <div class="kp-label" style="color:#5B4DA0">KEY POINT</div>
+          <div class="kp-text" style="color:#5B4DA0">完成八次共學里程碑自評</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#E6F5EC;color:#1A6B3C">🧭</div>
+          <div class="card-title" style="color:#1A6B3C">知道何時向上諮詢</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li>清楚自己的能力邊界在哪裡</li>
+            <li>遇到超出範圍的情境，能說清楚「我不確定的是什麼」</li>
+            <li>不是所有事情都自己扛，也不是所有事情都依賴主管或總部</li>
+          </ul>
+        </div>
+        <div class="card-keypoint" style="background:#E6F5EC;">
+          <div class="kp-label" style="color:#1A6B3C">KEY POINT</div>
+          <div class="kp-text" style="color:#1A6B3C">建立「我能判斷 / 我需要確認」的清單</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-icon">✅</div>
+      <div class="milestone-content">
+        <strong>Phase 3 里程碑</strong>
+        <p>整合性檢核：遇到跨功能的複雜 HR 情境，能主導初步處理，Sandy 從主導轉為顧問角色</p>
+      </div>
+    </div>
+
+    <div class="sandy-role">
+      <strong>Sandy 的角色：</strong>顧問——由你主導，Sandy 審閱和補充，而不是幫你做決定
+    </div>
+  </section>
+
+  <!-- ── GPS TARGETS ── -->
+  <section id="gps" class="section">
+    <div class="section-header">
+      <div class="time-badge">2025–2026</div>
+      <h2>我的 GPS 目標方向</h2>
+      <p>目標分 H2 2025（建立基礎）和 2026（獨立應用）兩個時間段</p>
+    </div>
+
+    <div class="gps-tabs">
+      <button class="gps-tab active" onclick="showGPS('mjp')">🇯🇵 MJP Local HR</button>
+      <button class="gps-tab" onclick="showGPS('mkr')">🇰🇷 MKR Local HR</button>
+    </div>
+
+    <!-- MJP -->
+    <div id="mjp" class="gps-section active">
+      <div class="gps-split">
+        <div>
+          <div class="gps-col-header" style="background:var(--teal-dark)">
+            H2 2025 <span>建立基礎</span>
+          </div>
+
+          <div class="gps-row border-recruit">
+            <span class="dim-tag c-recruit">招募</span>
+            <p>能設計至少一組 STAR 結構的面試問題；開始記錄招募漏斗各環節數據</p>
+          </div>
+          <div class="gps-row border-compliance">
+            <span class="dim-tag c-compliance">法規</span>
+            <p>完成工作規則修訂與送審；建立日常合規追蹤清單</p>
+          </div>
+          <div class="gps-row border-er">
+            <span class="dim-tag c-er">ER</span>
+            <p>能識別 people issue 早期訊號並主動回報 Sandy</p>
+          </div>
+          <div class="gps-row border-ld">
+            <span class="dim-tag c-ld">L&D</span>
+            <p>完成 HR 六大功能共學計畫前四次</p>
+          </div>
+          <div class="gps-row border-cb">
+            <span class="dim-tag c-cb">薪酬</span>
+            <p>建立薪資帶和 Compa Ratio 基本概念，能計算並解讀負責部門的數據</p>
+          </div>
+          <div class="gps-row border-pm">
+            <span class="dim-tag c-pm">績效</span>
+            <p>了解 SMART 目標邏輯，能協助主管做基本目標檢查</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="gps-col-header" style="background:var(--teal-mid)">
+            2026 <span>獨立應用</span>
+          </div>
+
+          <div class="gps-row border-recruit">
+            <span class="dim-tag c-recruit">招募</span>
+            <p>招募卡關時能用漏斗邏輯獨立診斷原因，提出調整建議</p>
+          </div>
+          <div class="gps-row border-compliance">
+            <span class="dim-tag c-compliance">法規</span>
+            <p>能獨立維護日常合規追蹤；能向主管說明工作規則重點變更</p>
+          </div>
+          <div class="gps-row border-er">
+            <span class="dim-tag c-er">ER</span>
+            <p>在 Sandy 指導下能獨立完成 people issue 初步介入和書面記錄</p>
+          </div>
+          <div class="gps-row border-ld">
+            <span class="dim-tag c-ld">L&D</span>
+            <p>完成共學計畫八次；能協助主管為員工建立基本 IDP</p>
+          </div>
+          <div class="gps-row border-cb">
+            <span class="dim-tag c-cb">薪酬</span>
+            <p>在定薪或調薪討論中能提出有依據的建議</p>
+          </div>
+          <div class="gps-row border-pm">
+            <span class="dim-tag c-pm">績效</span>
+            <p>年底校準前能協助主管整理員工表現的具體事實記錄</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MKR -->
+    <div id="mkr" class="gps-section">
+      <div class="gps-notice">
+        <strong>前提條件：</strong>以下目標以目前可投入的 50% HR 時間為基礎設定，深度較 MJP 輕。明年角色移轉後，目標範圍將同步擴大。
+      </div>
+
+      <div class="gps-split">
+        <div>
+          <div class="gps-col-header" style="background:var(--teal-dark)">
+            H2 2025 <span>建立基礎</span>
+          </div>
+
+          <div class="gps-row border-recruit">
+            <span class="dim-tag c-recruit">招募</span>
+            <p>開始記錄招募漏斗各環節數據；了解 STAR 面試法概念</p>
+          </div>
+          <div class="gps-row border-compliance">
+            <span class="dim-tag c-compliance">法規</span>
+            <p>完成工作規則修訂與送審；釐清 Manpower 派遣的法律邊界</p>
+          </div>
+          <div class="gps-row border-er">
+            <span class="dim-tag c-er">ER</span>
+            <p>能識別 people issue 早期訊號並主動回報 Sandy</p>
+          </div>
+          <div class="gps-row border-cb">
+            <span class="dim-tag c-cb">薪酬</span>
+            <p>建立薪資帶和市場定位的基本概念</p>
+          </div>
+          <div class="gps-row border-role">
+            <span class="dim-tag c-role">移轉</span>
+            <p>完成共學計畫前四次；與 Country Head 確認 Sales Ops / Finance 移交時程</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="gps-col-header" style="background:var(--teal-mid)">
+            2026 <span>獨立應用</span>
+          </div>
+
+          <div class="gps-row border-recruit">
+            <span class="dim-tag c-recruit">招募</span>
+            <p>招募卡關時能用漏斗邏輯診斷原因，提出調整建議</p>
+          </div>
+          <div class="gps-row border-compliance">
+            <span class="dim-tag c-compliance">法規</span>
+            <p>能獨立追蹤 MKR 日常合規，遇到不確定情境主動諮詢</p>
+          </div>
+          <div class="gps-row border-er">
+            <span class="dim-tag c-er">ER</span>
+            <p>在 Sandy 指導下能進行 people issue 的基本初步介入</p>
+          </div>
+          <div class="gps-row border-cb">
+            <span class="dim-tag c-cb">薪酬</span>
+            <p>能回答員工基本薪酬問題，複雜情境轉介 Sandy</p>
+          </div>
+          <div class="gps-row border-role">
+            <span class="dim-tag c-role">移轉</span>
+            <p>完成共學計畫八次；full HR role 移轉正式啟動</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="sandy-role">
+      <strong>說明：</strong>目標方向供 Sandy 和 Country Head 討論確認，具體 KPI 和衡量指標待共識後由 Sandy 草擬
+    </div>
+  </section>
+
+</main>
+
+<script>
+function showPhase(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.phase-bar-item').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['p1','p2','p3','gps'].indexOf(id);
+  document.querySelectorAll('.phase-bar-item')[idx].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showGPS(id) {
+  document.querySelectorAll('.gps-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.gps-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
